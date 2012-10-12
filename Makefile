@@ -1,6 +1,6 @@
 build_dir = ./build
+pkg_dir = ./build/plugin
 torquebox_url="http://repository-projectodd.forge.cloudbees.com/release/org/torquebox/torquebox-dist/2.1.2/torquebox-dist-2.1.2-bin.zip"
-
 compile:
 	mkdir -p $(build_dir)
 
