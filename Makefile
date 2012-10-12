@@ -7,16 +7,16 @@ compile:
 	@if [ -e torquebox2 ]; then \
 	   echo "Skipping torquebox download"; \
 	else \
-	   echo "Downloading torquebox..."; \
-	   curl $(torquebox_url) > $(build_dir)/torquebox.zip; \
-	   unzip -d . $(build_dir)/torquebox.zip; \
-	   mv ./torquebox-2* torquebox2; \
-	   export TORQUEBOX_HOME=$(build_dir)/torquebox2; \
-		 export JBOSS_HOME=$TORQUEBOX_HOME/jboss; \
-		 export JRUBY_HOME=$TORQUEBOX_HOME/jruby; \
-		 export PATH=$JRUBY_HOME/bin:$PATH; \
-		 echo "Installing torquebox gem"; \
-		 jruby -S gem install torquebox
+	  echo "Downloading torquebox...from $(torquebox_url)"; \
+		curl $(torquebox_url) > $(build_dir)/torquebox.zip; \
+		unzip -d . $(build_dir)/torquebox.zip; \
+		mv ./torquebox-2* torquebox2; \
+		TORQUEBOX_HOME=$(build_dir)/torquebox2; \
+		JBOSS_HOME=$(TORQUEBOX_HOME)/jboss; \
+		JRUBY_HOME=$(TORQUEBOX_HOME)/jruby; \
+		PATH=$(JRUBY_HOME)/bin:$(PATH); \
+		echo "Installing torquebox gem"; \
+		jruby -S gem install torquebox; \
 	fi
 
 package: compile
