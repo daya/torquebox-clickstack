@@ -1,0 +1,83 @@
+# -*-shell-script-*-
+set -x
+
+java=`which java`
+echo "Using $java"
+
+app_root=$app_dir/app_root
+app_name=`echo $app_root | awk -F/ '{print $NF}'`
+
+install_app() {
+    echo "Installing uni-tenant torquebox"
+    torquebox_dir=$app_dir/torquebox2
+    cp -rf $plugin_dir/torquebox2 $torquebox_dir
+    chmod +x $torquebox_dir/jruby/bin/*
+
+    echo "Setting environment variables"
+    export TORQUEBOX_HOME=$torquebox_dir
+    export JBOSS_HOME=$TORQUEBOX_HOME/jboss
+    export JRUBY_HOME=$TORQUEBOX_HOME/jruby
+    export PATH=$JRUBY_HOME/bin:$PATH
+
+    echo "Copying app source from $pkg_dir to $app_root"
+    cp -a $pkg_dir/ $app_root/
+
+    echo "Deploying app $app_name to torquebox"
+    #TODO try --context-path=/ 
+    torquebox deploy $app_root --context-path=/$app_name --name=$app_name
+
+    if [ -f "$app_root/Gemfile"]; then
+        cd $app_root
+        echo "Installing gems specified in $app_dir/Gemfile"
+        bundle install
+        cd $OLDPWD    
+    fi
+
+}
+
+create_app_skel() {
+    chmod 770 $app_dir
+    mkdir -m 770 $app_root
+    mkdir -m 770 $app_root/log
+    mkdir -m 770 $app_dir/tmp
+}
+
+write_config() {
+    config="$control_dir/config"
+    echo "app_dir=$app_dir" >> $config
+    echo "port=$app_port" >> $config
+    echo "java=$java" >> $config
+    echo "torquebox_home=$torquebox_dir" >> $config
+    echo "jboss_home=$torquebox_home/jboss" >> $config
+    echo "jruby_home=$torquebox_home/jruby" >> $config
+    echo "PATH=$jruby_home/bin:$PATH" >> $config
+
+    set +u
+    echo "environment=$staxcat_appserver_env" >> $config
+    set -u
+}
+
+# write_java_opts() {
+#     java_opts_core="$control_dir/java-opts-10-core"
+#     set +u
+#     resolved_opts=$(eval "echo $staxcat_java_opts")
+#     set -u
+#     echo $resolved_opts > $java_opts_core
+# }
+
+# write_appserver_xml() {
+#     echo "placeholder"
+# }
+
+write_control() {
+    install -m 550 $plugin_dir/control/start $control_dir
+    install -m 550 $plugin_dir/control/stats-appstat $control_dir
+}
+
+create_app_skel
+install_app
+write_config
+# write_java_opts
+# write_appserver_xml
+write_control
+

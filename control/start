@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+set -u
+
+control_dir="$(dirname $0)"
+. $control_dir/config
+
+echo "*** Changing default port 8080 for torquebox to $port ***"
+
+sed -i -e "s/8080/$port/" $torquebox_home/jboss/standalone/configuration/standalone.xml
+
+#exec $app_dir/tomcat7/bin/catalina.sh run
+echo "Assuming Ruby1.9 :( should be configurable :( "
+
+echo exec jruby --1.9 -S torquebox run
+
+exec jruby --1.9 -S torquebox run
