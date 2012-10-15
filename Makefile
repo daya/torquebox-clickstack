@@ -28,7 +28,7 @@ compile:
 		echo "Downloading JRuby1.7"; \
 		curl $(jruby_url) > $(build_dir)/jruby-1.7RC2.zip; \
 	fi
-	
+
 	unzip -d . $(build_dir)/jruby-1.7RC2.zip; \
 	echo "Overiding JRuby1.6 - has problems with base torquebox2"; \
 	cp -R ./jruby-1.7*/* torquebox2/jruby/; \
@@ -39,7 +39,7 @@ compile:
 
 
 package: compile
-	jar cvf $(build_dir)/torquebox2-plugin.zip control server setup torquebox2
+	zip $(build_dir)/torquebox2-plugin.zip -r control server setup torquebox2
 
 clean:
 	rm -rf $(build_dir)
