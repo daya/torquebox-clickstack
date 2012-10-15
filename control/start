@@ -5,11 +5,18 @@ set -u
 control_dir="$(dirname $0)"
 . $control_dir/config
 
-echo "*** Changing default port 8080 for torquebox to $port ***"
+# TODO: torquebox should be an absolute path -- where is this installed?
+#       e.g. use $app_dir/blah/bin/torquebox, or if relying on PATH, add
+#       a node that config sets PATH
 
-echo "Assuming Ruby1.9 :( should be configurable :( "
+# TODO: java env var is stored in config but not used here -- remove from
+#       config or use here
 
-echo torquebox run -J="-Djboss.web.http.port=$port"
+# TODO: the use of config is intended be reflected in the direct use of
+#       vars here -- if it's just to setup environment variables that
+#       are used by torquebox, it's better to define the env vars here, using
+#       values from config, to make it clear what's going on -- e.g. define
+#       jruby_home in config and then use $jruby_home in a PATH declaration
+#       below
 
-#exec jruby --1.9 -S torquebox run
-exec torquebox run -J="-Djboss.web.http.port=$port" 
+exec torquebox run -J="-Djboss.web.http.port=$port"

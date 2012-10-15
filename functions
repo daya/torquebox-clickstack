@@ -1,0 +1,83 @@
+# -*-shell-script-*-
+
+. $plugin_dir/java/functions
+
+app_name() {
+    # use app name portion of app ID (e.g. bar in foo/bar)
+    echo "${extra_app_id#*/}"
+}
+
+install_app() {
+    echo "Installing uni-tenant torquebox"
+    torquebox_dir=$app_dir/torquebox2
+    cp -rf $plugin_dir/torquebox2 $torquebox_dir
+    chmod 755 $torquebox_dir/jruby/bin/*
+
+    echo "Setting environment variables"
+    export TORQUEBOX_HOME=$torquebox_dir
+    export JBOSS_HOME=$TORQUEBOX_HOME/jboss
+    export JRUBY_HOME=$TORQUEBOX_HOME/jruby
+    export PATH=$JRUBY_HOME/bin:$PATH
+
+    echo "JRUBY_HOME=$JRUBY_HOME"
+    echo "PATH=$PATH"
+    echo "which jruby `which jruby`"
+
+    echo "Copying app source from $pkg_dir to $app_dir"
+    cp -a $pkg_dir/ $app_dir/
+
+    echo "Installing Torquebox gem"
+    jruby -S gem install torquebox --no-ri --no-rdoc
+    echo "Installing jruby-openssl and bundler"
+    jruby -S gem install jruby-openssl bundler --no-ri --no-rdoc
+
+    app_name=$(app_name)
+    echo "Deploying app $app_name to torquebox"
+    # TODO: pass in ENVIRONMENT --env=production|test|development
+    jruby --1.9 -S torquebox deploy $app_dir --name=$app_name
+}
+
+create_app_skel() {
+    # TODO: confirm that each of these is used/is necessary for the app
+    chmod 770 $app_dir
+    mkdir -m 770 $app_dir
+    mkdir -m 770 $app_dir/log
+    mkdir -m 770 $app_dir/tmp
+}
+
+write_config() {
+    config="$control_dir/config"
+    echo "Writing configuration to $config"
+    echo "app_dir=$app_dir" >> $config
+    echo "port=$app_port" >> $config
+    # TODO: find_java is a function provided by the java plugins (loaded
+    # above) -- is this needed? doesn't appear used by start script.
+    # If this isn't used, and if support for java opts isn't needed, we
+    # don't need the java plugin code at all.
+    java=$(find_java)
+    echo "Using JVM at $java"
+    echo "java=$java" >> $config
+    torquebox_home=$torquebox_dir
+    jruby_home=$torquebox_home/jruby
+    # TODO: see note in control/start about exporting env vars here vs
+    # defining them in control/start based on vars here
+    echo "export TORQUEBOX_HOME=$torquebox_dir" >> $config
+    echo "export JBOSS_HOME=$torquebox_home/jboss" >> $config
+    echo "export JRUBY_HOME=$torquebox_home/jruby" >> $config
+    # TODO: env vars are case sensitive - use JRUBY_HOME below?
+    echo "export PATH=$jruby_home/bin:$PATH" >> $config
+}
+
+write_control() {
+    install -m 550 $plugin_dir/control/start $control_dir
+}
+
+install_app_gems(){
+    if [ -f "$app_dir/Gemfile" ]; then
+        cd $app_dir
+        echo "Installing gems specified in $app_dir/Gemfile"
+        jruby -S bundle install
+	# TODO: delete following line - never rely on cwd
+        cd $OLDPWD
+    fi
+}
