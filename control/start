@@ -7,11 +7,9 @@ control_dir="$(dirname $0)"
 
 echo "*** Changing default port 8080 for torquebox to $port ***"
 
-sed -i -e "s/8080/$port/" $TORQUEBOX_HOME/jboss/standalone/configuration/standalone.xml
-
-#exec $app_dir/tomcat7/bin/catalina.sh run
 echo "Assuming Ruby1.9 :( should be configurable :( "
 
-echo exec jruby --1.9 -S torquebox run
+echo torquebox run -J="-Djboss.web.http.port=$port"
 
-exec jruby --1.9 -S torquebox run
+#exec jruby --1.9 -S torquebox run
+exec torquebox run -J="-Djboss.web.http.port=$port" 
