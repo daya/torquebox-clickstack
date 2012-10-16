@@ -40,9 +40,9 @@ install_app() {
 create_app_skel() {
     # TODO: confirm that each of these is used/is necessary for the app
     chmod 770 $app_dir
-    mkdir -m 770 $app_dir
-    mkdir -m 770 $app_dir/log
-    mkdir -m 770 $app_dir/tmp
+    mkdir -p -m 770 $app_dir
+    mkdir -p -m 770 $app_dir/log
+    mkdir -p -m 770 $app_dir/tmp
 }
 
 write_config() {
