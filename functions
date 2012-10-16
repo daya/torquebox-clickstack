@@ -1,6 +1,6 @@
 # -*-shell-script-*-
 
-. $plugin_dir/java/functions
+#. $plugin_dir/java/functions
 
 app_name() {
     # use app name portion of app ID (e.g. bar in foo/bar)
