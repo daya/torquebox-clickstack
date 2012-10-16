@@ -3,6 +3,7 @@
 set -u
 set -e
 echo "File location $0"
+echo "plugin_dir = $plugin_dir"
 
 . "$plugin_dir/functions"
 
