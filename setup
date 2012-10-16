@@ -2,6 +2,7 @@
 
 set -u
 set -e
+echo "File location $0"
 
 . "$plugin_dir/functions"
 
