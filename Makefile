@@ -39,7 +39,7 @@ compile:
 
 
 package: compile
-	zip $(build_dir)/torquebox2-plugin.zip -r control server setup torquebox2
+	zip $(build_dir)/torquebox2-plugin.zip -r control server setup torquebox2 functions
 
 clean:
 	rm -rf $(build_dir)
