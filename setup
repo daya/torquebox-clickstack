@@ -3,9 +3,13 @@
 set -u
 set -e
 echo "File location $0"
-echo "plugin_dir = $plugin_dir"
+echo "plugin_dir = $plugin_dir/"
 
-. "$plugin_dir/functions"
+source "./functions"
+if [ -f "$plugin_dir/functions" ]; then
+    echo "<<<<<functions file exists>>>>>>>"
+fi
+source "$plugin_dir/functions"
 
 create_app_skel
 install_app
