@@ -1,7 +1,5 @@
 # -*-shell-script-*-
 
-#. $plugin_dir/java/functions
-
 app_name() {
     # use app name portion of app ID (e.g. bar in foo/bar)
     echo "${extra_app_id#*/}"
@@ -10,7 +8,16 @@ app_name() {
 install_app() {
     echo "Installing uni-tenant torquebox"
     torquebox_dir=$app_dir/torquebox2
+    chmod og+r $plugin_dir/torquebox2/jboss/domain/configuration/*-users.properties
+    chmod og+r $plugin_dir/torquebox2/jboss/tmp/auth
+    
     cp -rf $plugin_dir/torquebox2 $torquebox_dir
+    
+    chmod og-r $plugin_dir/torquebox2/jboss/domain/configuration/*-users.properties
+    chmod og-r $plugin_dir/torquebox2/jboss/tmp/auth
+    chmod og-r $torquebox_dir/torquebox2/jboss/domain/configuration/*-users.properties
+    chmod og-r $torquebox_dir/torquebox2/jboss/tmp/auth
+
     chmod 755 $torquebox_dir/jruby/bin/*
 
     echo "Setting environment variables"
