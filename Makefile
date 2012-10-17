@@ -21,6 +21,11 @@ compile:
 
 	unzip -d . $(build_dir)/torquebox.zip; \
 	mv ./torquebox-2* torquebox2; \
+	chmod og+r torquebox2/jboss/domain/configuration/*-users.properties
+	chmod og+r torquebox2/jboss/domain/tmp/auth
+	chmod og+r torquebox2/jboss/standalone/tmp/auth
+	chmod og+r torquebox2/jboss/standalone/configuration/*-users.properties
+
 
 	@if [ -e $(build_dir)/jruby-1.7RC2.zip ]; then \
 		echo "Skipping JRuby-1.7 download"; \
